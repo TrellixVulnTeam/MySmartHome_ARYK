@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">MySmartHome</string>
+    <string name="beschriftung">Was soll ich sagen?</string>
+    <string name="sag_es_button">Sag es!</string>
+    <string name="message_to_say" />
+    <string name="switch_mode">Nachricht</string>
+    <string name="toggle_button">Nachricht anzeigen</string>
+    <string name="sensor_daten">Sensordaten und Empfehlungen:</string>
+    <string name="temp_text">Temperatur (außen):</string>
+    <string name="humid_text">Feuchtigkeit (außen):</string>
+    <string name="advice_text">Empfehlung:</string>
+    <string name="temp" > noch keine Daten</string>
+    <string name="humid"> noch keine Daten</string>
+    <string name="advice">noch keine Empfehlung</string>
+    <string name="led_box">LED-BOX</string>
+    <string name="tau_text">Taupunkt (außen):</string>
+    <string name="tau">noch keine Daten</string>
+</resources>
