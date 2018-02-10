@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SmartHome</string>
+    <string name="toggle_button">Etagenwechsel</string>
+    <string name="toggle_turn_top">Oben</string>
+    <string name="toggle_turn_bottom">Unten</string>
+    <string name="toggle_turn_advanced">Erweitert</string>
+    <string name="toggle_turn_simple">Einfach</string>
+</resources>

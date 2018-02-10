@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MySmartHome</string>
+    <string name="app_name">SmartHome</string>
     <string name="beschriftung">Was soll ich sagen?</string>
     <string name="sag_es_button">Sag es!</string>
     <string name="message_to_say" />
