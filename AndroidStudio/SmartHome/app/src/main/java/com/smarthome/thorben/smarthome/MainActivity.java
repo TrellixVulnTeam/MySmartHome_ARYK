@@ -6,11 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     GridLayout mainGrid;
-    Intent startHomeActivity;
+    Intent startHomeActivity,startLEDMatrixActivity;
     private TextView title;
 
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
         title = (TextView) findViewById(R.id.textGrid);
         startHomeActivity = new Intent(this, HomeActivity.class);
+        startLEDMatrixActivity = new Intent(this, LEDMatrixActivity.class);
+
         //startStatisticsActivity = new Intent(this,StatisticsActivity.class);
         //startControllerActivity = new Intent(this,ControllerActivity.class);
         //startLEDActivity = new Intent(this,LEDActivity.class);
@@ -40,19 +43,21 @@ public class MainActivity extends AppCompatActivity {
         mainGrid.getChildAt(1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                title.setText("LED-Matrix");
+                startActivity(startLEDMatrixActivity);
             }
         });
         mainGrid.getChildAt(2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                title.setText("Steuerung");
+                //Steuerung
+                Toast.makeText(MainActivity.this, "controlling coming soon!", Toast.LENGTH_LONG).show();
             }
         });
         mainGrid.getChildAt(3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                title.setText("Statistiken");
+                //Statistiken
+                Toast.makeText(MainActivity.this, "statistics coming soon!", Toast.LENGTH_LONG).show();
             }
         });
 

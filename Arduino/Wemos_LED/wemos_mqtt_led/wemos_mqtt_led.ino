@@ -1,3 +1,4 @@
+//for programming: WeMos D1 & R2 mini | 115200 BAUD!!! |  4M (3M..)
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
@@ -8,12 +9,16 @@
 
 #define TX D1
 #define RX D2
+#define TIMESTAMP 500000
 
-char mode = 'T';
+char mode_str[5];
+char status_str[5];
+
+
 SoftwareSerial SerialMega(RX, TX); // RX, TX
 
 const char* ssid = "wlfsl24";
-const char* password = "**"; // before flashing fill back in
+const char* password = "..."; // before flashing fill back in
 unsigned int localPort = 2390; // local port to listen for UDP packets
 const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
 
@@ -45,6 +50,16 @@ void setup(void) {
     delay(500);
   }
   udp.begin(localPort);
+
+  //setup mode and status of ledmatrix
+  mode_str[0]='T'; // timestamp
+  status_str[0]='Y'; // on
+  
+  SerialMega.print("M");
+  SerialMega.print("T");
+  delay(100);
+  SerialMega.print("M");
+  SerialMega.print("Y");
 }
 
 void setup_wifi() {
@@ -94,17 +109,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
     switch (payload[0]) { //ASCII conversion
       case 83:
         SerialMega.print("S");
-        mode = 'S';
+        mode_str[0]='S';
         break;
 
       case 84:
         SerialMega.print("T");
-        mode = 'T';
+        mode_str[0]='T';
+        break;
+        
+      case 88:
+        SerialMega.print("X");
+        status_str[0]='X';
         break;
 
+      case 89:
+        SerialMega.print("Y");
+        status_str[0]='Y';
+        break;
+        
       default:
         SerialMega.print("T");
-        mode = 'T';
+        mode_str[0]='T';
         break;
     }
 #ifdef DEBUG_MODE
@@ -124,6 +149,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.println("");
 #endif
   }
+  else if (strTopic == "info_led") {
+#ifdef DEBUG_MODE
+    Serial.println("Send information to app");
+#endif
+     client.publish("ack_mode", mode_str);
+     client.publish("ack_status", status_str);
+  }
 }
 
 void reconnect() {
@@ -142,6 +174,7 @@ void reconnect() {
       // ... and resubscribe
       client.subscribe("mode_led");
       client.subscribe("msg_led");
+      client.subscribe("info_led");
     } else {
 #ifdef DEBUG_MODE
       Serial.print("failed, rc=");
@@ -216,7 +249,7 @@ void loop(void) {
   }
   client.loop();
 
-  if (timecount == 160000) {
+  if (timecount == TIMESTAMP) {
     getTimeFromServer();
     timecount = 0;
   }

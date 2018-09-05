@@ -4,11 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg2"
+    android:background="@drawable/bg3"
     android:orientation="vertical"
     android:weightSum="10"
     tools:context="com.smarthome.thorben.smarthome.MainActivity">
-    
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.70">
+
+        <TextView
+            android:id="@+id/textGrid2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="       "
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="34sp" />
+    </RelativeLayout>
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,8 +39,24 @@
             android:text="SmartHome"
             android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:textSize="34sp" />
+            android:textSize="40sp" />
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.65">
+
+        <TextView
+            android:id="@+id/textGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="       "
+            android:textColor="@android:color/white"
+            android:textSize="34sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <GridLayout
@@ -64,12 +97,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/homescheme_small" />
+                android:src="@drawable/homescheme_small_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hausdaten"
+                android:text="@string/hausdaten"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
@@ -79,7 +112,7 @@
 
         </android.support.v7.widget.CardView>
 
-        <!--Coloumn1-->
+        <!--Coloumn2-->
         <android.support.v7.widget.CardView
             android:id="@+id/cwLED"
             android:layout_width="0dp"
@@ -104,12 +137,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/led" />
+                    android:src="@drawable/led_dark" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LED-Matrix"
+                    android:text="@string/led_matrix"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -145,12 +178,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/controller" />
+                    android:src="@drawable/controller_dark" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Steuerung"
+                    android:text="@string/steuerung"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -160,7 +193,7 @@
 
         </android.support.v7.widget.CardView>
 
-        <!--Coloumn1-->
+        <!--Coloumn2-->
         <android.support.v7.widget.CardView
             android:id="@+id/cwStatistic"
             android:layout_width="0dp"
@@ -185,12 +218,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/statistics" />
+                    android:src="@drawable/statistics_dark" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Statistiken"
+                    android:text="@string/statistiken"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"

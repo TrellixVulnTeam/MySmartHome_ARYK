@@ -1,8 +1,24 @@
 <resources>
     <string name="app_name">SmartHome</string>
+    <string name="ledmatrix">LED-Matrix</string>
+    <string name="home">Hausübersicht</string>
+    <string name="statistics">Statistiken</string>
+    <string name="controller">Steuerung</string>
     <string name="toggle_button">Etagenwechsel</string>
     <string name="toggle_turn_top">Oben</string>
     <string name="toggle_turn_bottom">Unten</string>
     <string name="toggle_turn_advanced">Erweitert</string>
     <string name="toggle_turn_simple">Einfach</string>
+    <string name="messageToSay">Welchen Text soll ich darstellen?</string>
+    <string name="ledButton">Tu es!</string>
+    <string name="ledModeTime">Uhrzeit</string>
+    <string name="ledModeString">Text</string>
+    <string name="ledMode">Mode: </string>
+    <string name="ledStatusOff">Aus</string>
+    <string name="ledStatusOn">An</string>
+    <string name="ledStatus">Status: </string>
+    <string name="hausdaten">Hausdaten</string>
+    <string name="led_matrix">LED-Matrix</string>
+    <string name="steuerung">Steuerung</string>
+    <string name="statistiken">Statistiken</string>
 </resources>

@@ -3,35 +3,35 @@
 #include <PubSubClient.h>
 #include <math.h>
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 #define MEASURETIME 10000 //10sec
-#define DHTPIN 5 //D1
+#define DHTPIN 14 //D5
 #define DHTTYPE DHT22
 #define A 17.27
 #define B 237
-#define ARRAY_SIZE 10
+#define ARRAY_SIZE 3
 #define HUMID_TOLERANCE 10
 #define TEMP_TOLERANCE 3
+#define DEFAULT_VALUE 512.0
 
 float temp_array[ARRAY_SIZE];
 float humid_array[ARRAY_SIZE];
 int newIndex = 0;
-float t = 99;
-float h = 99;
+float t = 99.0;
+float h = 99.0;
 float old_h, old_t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
 const char* sensor = "thorben"; //change this if you want to use multiple sensors
 const char* ssid = "wlfsl24";
-const char* password = "***";
+const char* password = "HNR46HH80Lohbruegge";
 const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
 
 char topic_temp[80];
 char topic_humid[80];
 char topic_tau[80];
-char topic_air[80];
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -39,12 +39,10 @@ long lastMsg = 0;
 char msg_temp[50];
 char msg_humid[50];
 char msg_tau[50];
-char msg_air[50];
 
 char t_char[10];
 char h_char[10];
 char tau_char[10];
-char air_char[50];
 
 int value = 0;
 
@@ -58,8 +56,8 @@ void setup() {
   client.setCallback(callback);
 
   for (int x = 0; x < ARRAY_SIZE; x++) {
-    temp_array[x] = 24.0;
-    humid_array[x] = 50.0;
+    temp_array[x] = DEFAULT_VALUE;
+    humid_array[x] = DEFAULT_VALUE;
   }
 
   strcpy (topic_temp, "temp_");
@@ -70,9 +68,6 @@ void setup() {
 
   strcpy (topic_tau, "tau_");
   strcat (topic_tau, sensor);
-
-  strcpy (topic_air, "air_");
-  strcat (topic_air, sensor);
 }
 
 
@@ -118,10 +113,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   char str[80];
   strcpy (str, sensor);
-  strcat (str, " - NODEMCU with temperature publisherconnected");
+  strcat (str, " - NODEMCU with temperature publisher connected");
 
   // Loop until we're reconnected
-  while (!client.connected()) {
+  while (client.connected()) {
 #ifdef DEBUG_MODE
     Serial.print("Attempting MQTT connection...");
 #endif
@@ -146,6 +141,7 @@ void reconnect() {
 
 
 void loop() {
+  
   if (!client.connected()) {
     reconnect();
   }
@@ -158,7 +154,7 @@ void loop() {
     old_h = h;
     old_t = t;
 
-    if (h == 99 && t == 99) { //reset values
+    if (h == DEFAULT_VALUE && t == DEFAULT_VALUE) { //reset values
       old_h = dht.readHumidity();
       old_t = dht.readTemperature();
     }
@@ -166,7 +162,15 @@ void loop() {
     h = dht.readHumidity();
     t = dht.readTemperature();
 
-    if ((abs(old_h - h) < HUMID_TOLERANCE) && (abs(old_t - t) < TEMP_TOLERANCE)) {
+    Serial.println(h);
+    Serial.println(t);
+
+
+    if ((abs(old_h - h) < HUMID_TOLERANCE) && (abs(old_t - t) < TEMP_TOLERANCE)) { //negate measurement failures
+      temp_array[newIndex] = t;
+      humid_array[newIndex] = h;
+      newIndex++;
+    }else if(temp_array[newIndex]==DEFAULT_VALUE){ //override defaultvalues after startup (only need to check one, because the get saved in pairs)
       temp_array[newIndex] = t;
       humid_array[newIndex] = h;
       newIndex++;
@@ -187,6 +191,7 @@ void loop() {
       t_mean += temp_array[x];
       h_mean += humid_array[x];
     }
+    
 #ifdef DEBUG_MODE
     Serial.println(t_mean);
     Serial.println(h_mean);
@@ -195,7 +200,6 @@ void loop() {
     t_mean = t_mean / ARRAY_SIZE;
     h_mean = h_mean / ARRAY_SIZE;
 
-
     //Berechne Taupunkt
     float f = (A * t_mean) / (B + t_mean) + log(h_mean / 100);
     float tau = (B * f) / (A - f);
@@ -203,15 +207,6 @@ void loop() {
     dtostrf(t_mean, 9, 2, t_char);
     dtostrf(h_mean, 9, 2, h_char);
     dtostrf(tau, 9, 2, tau_char);
-
-
-    if (tau <= 2) {
-      snprintf (air_char, 50, "Bitte nur kurz lüften! Heizung ausmachen nicht vergessen.");
-    } else if (tau > 2 && tau <= 10 ) {
-      snprintf (air_char, 50, "Bitte lüften! Heizung ausmachen nicht vergessen.");
-    } else {
-      snprintf (air_char, 50, "Das Fenster bleibt zu!");
-    }
 
     snprintf (msg_temp, 75, t_char, value);
 #ifdef DEBUG_MODE
@@ -231,15 +226,8 @@ void loop() {
     Serial.println(msg_tau);
 #endif
 
-    snprintf (msg_air, 75, air_char, value);
-#ifdef DEBUG_MODE
-    Serial.print("Publish message: ");
-    Serial.println(msg_air);
-#endif
-
     client.publish(topic_temp, msg_temp);
     client.publish(topic_humid, msg_humid);
     client.publish(topic_tau, msg_tau);
-    client.publish(topic_air, msg_air);
   }
 }

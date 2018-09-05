@@ -71,7 +71,6 @@ public class HomeActivity extends AppCompatActivity{
                 }
             });
         } catch (MqttException e) {
-            Toast.makeText(HomeActivity.this, "Mittendrin!", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
@@ -126,11 +125,11 @@ public class HomeActivity extends AppCompatActivity{
             if (isChecked) {
                 //Toast.makeText(HomeActivity.this, "Oben!", Toast.LENGTH_LONG).show();
                 ImageView img = (ImageView) findViewById(R.id.imageFloor);
-                img.setImageResource(R.drawable.oben);
+                img.setImageResource(R.drawable.oben_besser);
             } else {
                 //Toast.makeText(HomeActivity.this, "Unten!", Toast.LENGTH_LONG).show();
                 ImageView img = (ImageView) findViewById(R.id.imageFloor);
-                img.setImageResource(R.drawable.unten);
+                img.setImageResource(R.drawable.unten_besser);
             }
         }};
 }

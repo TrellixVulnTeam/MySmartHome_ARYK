@@ -1,0 +1,10 @@
+SmartMirror:
+- Abends (HDMI aus) / Morgens(neustart)
+
+App:
+- Integrieren von LED-Matrix
+- Neue Farben/Bilder
+
+
+LED-Matrix:
+- LED-Matrix und Wemos neuprogrammieren

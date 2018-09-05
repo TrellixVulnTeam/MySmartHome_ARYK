@@ -1,4 +1,4 @@
-#define DEBUG_MODE
+//#define DEBUG_MODE
 
 #define OFFSET_X_H_LOW 2
 #define OFFSET_X_H_HIGH 0
@@ -8,7 +8,9 @@
 
 char printStringX = 0; //offset of panelarray window
 char mode = 'T'; //current mode(display time or text)
-char command;
+char status = 'Y'; //current status (on or off)
+
+char command, modeRead;
 char timestamp_array[32];
 char string_array[30];
 char panel_array[8][30 * 4];
@@ -130,20 +132,30 @@ void calcTime(long timestamp) {
 
 
 void printDisplay() {
-  if (mode == 'T') {
-    printTime();
+  if (status == 'Y') { //on
+    if (mode == 'T') {
+      printTime();
 #ifdef DEBUG_MODE
-    Serial.println("Going to print the time!");
+      Serial.println("Going to print the time!");
 #endif
-  } else if (mode == 'S') {
-    printString();
+    } else if (mode == 'S') {
+      printString();
 #ifdef DEBUG_MODE
-    Serial.println("Going to print the String!");
+      Serial.println("Going to print the String!");
 #endif
-  } else {
+    } else {
 #ifdef DEBUG_MODE
-    Serial.println("No valid mode - display time!");
+      Serial.println("No valid mode - display time!");
 #endif
+    }
+  } else { // off
+    //clear panel
+    for (int y = 0; y < 8; y++) {
+      for (int x = 0; x < 15; x++) {
+        panel[y][x] = 0;
+      }
+    }
+    printPanel();
   }
 #ifdef DEBUG_MODE
   Serial.println("");
@@ -159,14 +171,10 @@ void loop() {
     Serial.println(mode);
 #endif
 
-    timestamp = 0;
+    command = Serial1.read();
 
 #ifdef DEBUG_MODE
     Serial.print("New Command: ");
-#endif
-
-#ifdef DEBUG_MODE
-    command = Serial1.read();
     Serial.println(command);
 #endif
 
@@ -190,11 +198,27 @@ void loop() {
         break;
 
       case 'M':
-        mode = Serial1.read();
+        modeRead = Serial1.read();
+        switch (modeRead) {
+          case  'T':
+            mode = 'T';
+            break;
+          case  'S':
+            mode = 'S';
+            break;
+          case  'X':
+            status = 'X';
+            break;
+          case  'Y':
+            status = 'Y';
+            break;
+        }
 
 #ifdef DEBUG_MODE
-        Serial.println("Read new Mode :");
+        Serial.print("Read new Mode :");
         Serial.println(mode);
+        Serial.print("Status :");
+        Serial.println(status);
 #endif
 
         break;
