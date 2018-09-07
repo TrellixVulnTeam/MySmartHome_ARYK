@@ -8,6 +8,8 @@
 #define MEASURETIME 10000 //10sec
 #define DHTPIN 14 //D5
 #define DHTTYPE DHT22
+#define LEDPIN 16 //D0
+
 #define A 17.27
 #define B 237
 #define ARRAY_SIZE 3
@@ -24,7 +26,7 @@ float old_h, old_t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char* sensor = "outdoor"; //change this if you want to use multiple sensors
+const char* sensor = "johanna"; //change this if you want to use multiple sensors
 const char* ssid = "wlfsl24";
 const char* password = "HNR46HH80Lohbruegge";
 const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
@@ -32,6 +34,7 @@ const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
 char topic_temp[80];
 char topic_humid[80];
 char topic_tau[80];
+char topic_kaiuwe[80];
 char sensorname[80];
 
 WiFiClient espClient;
@@ -51,6 +54,8 @@ void setup() {
 #ifdef DEBUG_MODE
   Serial.begin(115200);
 #endif
+  pinMode(LEDPIN, OUTPUT);
+
   dht.begin();
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -69,6 +74,9 @@ void setup() {
 
   strcpy (topic_tau, "tau_");
   strcat (topic_tau, sensor);
+
+  strcpy (topic_kaiuwe, "kai-uwe_");
+  strcat (topic_kaiuwe, sensor);
   
   strcpy (sensorname, "ESP8266Client-Temperature-Publisher-");
   strcat (sensorname, sensor);
@@ -103,6 +111,10 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
+  char msg[length];
+  for (int i = 0; i < length; i++) {
+    msg[i] =((char)payload[i]);
+  }
 #ifdef DEBUG_MODE
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -112,6 +124,36 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 #endif
+  if(strcmp(topic,topic_kaiuwe)==0){
+    switch (payload[0]) {
+      case 'R':
+#ifdef DEBUG_MODE
+        Serial.println("RED");
+#endif
+        digitalWrite(LEDPIN,1);
+        break;
+        
+      case 'G':
+#ifdef DEBUG_MODE
+        Serial.println("GREEN");
+#endif
+        digitalWrite(LEDPIN,0);
+        break;
+        
+      case 'Y':
+#ifdef DEBUG_MODE
+        Serial.println("YELLOW");
+#endif
+        digitalWrite(LEDPIN,0);
+        break;
+
+      default:
+        digitalWrite(LEDPIN,0);
+#ifdef DEBUG_MODE
+        Serial.println("Nothing");
+#endif
+    }
+  }
 }
 
 void reconnect() {
@@ -131,7 +173,8 @@ void reconnect() {
 #endif
       // Once connected, publish an announcement...
       client.publish("debug", str);
-      return;
+      client.subscribe(topic_kaiuwe);
+       
     } else {
 #ifdef DEBUG_MODE
       Serial.print("failed, rc=");
