@@ -24,7 +24,7 @@ float old_h, old_t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char* sensor = "thorben"; //change this if you want to use multiple sensors
+const char* sensor = "outdoor"; //change this if you want to use multiple sensors
 const char* ssid = "wlfsl24";
 const char* password = "HNR46HH80Lohbruegge";
 const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
@@ -32,6 +32,7 @@ const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
 char topic_temp[80];
 char topic_humid[80];
 char topic_tau[80];
+char sensorname[80];
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -54,7 +55,7 @@ void setup() {
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-
+  
   for (int x = 0; x < ARRAY_SIZE; x++) {
     temp_array[x] = DEFAULT_VALUE;
     humid_array[x] = DEFAULT_VALUE;
@@ -68,6 +69,9 @@ void setup() {
 
   strcpy (topic_tau, "tau_");
   strcat (topic_tau, sensor);
+  
+  strcpy (sensorname, "ESP8266Client-Temperature-Publisher-");
+  strcat (sensorname, sensor);
 }
 
 
@@ -116,17 +120,18 @@ void reconnect() {
   strcat (str, " - NODEMCU with temperature publisher connected");
 
   // Loop until we're reconnected
-  while (client.connected()) {
+  while (!client.connected()) {
 #ifdef DEBUG_MODE
     Serial.print("Attempting MQTT connection...");
 #endif
     // Attempt to connect
-    if (client.connect("ESP8266Client-Temperature-Publisher")) {
+    if (client.connect(sensorname)) {
 #ifdef DEBUG_MODE
       Serial.println("connected");
 #endif
       // Once connected, publish an announcement...
       client.publish("debug", str);
+      return;
     } else {
 #ifdef DEBUG_MODE
       Serial.print("failed, rc=");
@@ -141,11 +146,12 @@ void reconnect() {
 
 
 void loop() {
+
   
   if (!client.connected()) {
     reconnect();
   }
-
+  
   client.loop();
 
   long now = millis();
@@ -161,10 +167,6 @@ void loop() {
 
     h = dht.readHumidity();
     t = dht.readTemperature();
-
-    Serial.println(h);
-    Serial.println(t);
-
 
     if ((abs(old_h - h) < HUMID_TOLERANCE) && (abs(old_t - t) < TEMP_TOLERANCE)) { //negate measurement failures
       temp_array[newIndex] = t;
