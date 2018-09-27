@@ -26,7 +26,7 @@ float old_h, old_t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char* sensor = "thorben"; //change this if you want to use multiple sensors
+const char* sensor = "outdoor"; //change this if you want to use multiple sensors
 const char* ssid = "wlfsl24";
 const char* password = "HNR46HH80Lohbruegge";
 const char* mqtt_server = "192.168.178.102"; //IP of Raspberry (MQTT-Broker)
