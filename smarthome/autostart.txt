@@ -1,0 +1,3 @@
+sudo crontab -e 
+sudo nano /etc/rc.local
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
